@@ -1,14 +1,12 @@
 const express = require('express')
 const http = require('http')
-const { getInstance, authorizeInstance } = require('./spotifyApi')
+const { getInstance, authorizeInstance, authorizeWithRefreshToken } = require('./spotifyApi')
+const { getRefreshToken, setRefreshToken } = require('./managers/refreshToken')
 
-function getAuthorizedInstance () {
-  // TODO - Check for refresh token and try to auth if exists
-
+function authorizeViaAuthFlow (apiInstance) {
   return new Promise((resolve, reject) => {
     const app = express()
     const server = http.createServer(app)
-    const apiInstance = getInstance()
     const state = String(Math.random())
     const scopes = ['playlist-modify-public', 'playlist-modify-private']
 
@@ -22,16 +20,15 @@ function getAuthorizedInstance () {
       }
 
       authorizeInstance(apiInstance, req.query.code)
-        .then(() => {
+        .then(({ refreshToken }) => {
           res.send('Successfully authenticated! You can close this page.').end()
 
           // Close the auth server
           server.close()
 
-          // TODO - Store refresh token
-
-          resolve(apiInstance)
+          return setRefreshToken(refreshToken)
         })
+        .then(resolve)
         .catch(reject)
     })
 
@@ -43,6 +40,21 @@ function getAuthorizedInstance () {
       console.log('Please go to http://localhost:8080/auth to authenticate with your Spotify account')
     })
   })
+}
+
+function getAuthorizedInstance () {
+  const apiInstance = getInstance()
+
+  return getRefreshToken()
+    .then(refreshToken => {
+      if (refreshToken) {
+        return authorizeWithRefreshToken(apiInstance, refreshToken)
+          .then(() => apiInstance)
+      }
+
+      return authorizeViaAuthFlow(apiInstance)
+        .then(() => apiInstance)
+    })
 }
 
 exports.getAuthorizedInstance = getAuthorizedInstance
