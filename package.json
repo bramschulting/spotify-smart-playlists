@@ -16,10 +16,21 @@
     "eslint-plugin-import": "^2.3.0",
     "eslint-plugin-node": "^5.0.0",
     "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^3.0.1"
+    "eslint-plugin-standard": "^3.0.1",
+    "husky": "^0.14.1",
+    "lint-staged": "^4.0.0",
+    "prettier-eslint": "^6.4.1",
+    "prettier-eslint-cli": "^4.1.1"
   },
   "scripts": {
-    "test": "eslint ."
+    "test": "eslint .",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier-eslint --write \"./**/*.js\"",
+      "git add"
+    ]
   },
   "keywords": [],
   "author": "",
