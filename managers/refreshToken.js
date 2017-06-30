@@ -18,3 +18,8 @@ exports.setRefreshToken = function setRefreshToken (refreshToken) {
   return getStorage()
     .then(storage => storage.setItem('refreshToken', refreshToken))
 }
+
+exports.removeRefreshToken = function removeRefreshToken () {
+  return getStorage()
+    .then(storage => storage.removeItem('refreshToken'))
+}

@@ -1,7 +1,7 @@
 const express = require('express')
 const http = require('http')
 const { getInstance, authorizeInstance, authorizeWithRefreshToken } = require('./spotifyApi')
-const { getRefreshToken, setRefreshToken } = require('./managers/refreshToken')
+const { getRefreshToken, setRefreshToken, removeRefreshToken } = require('./managers/refreshToken')
 
 function authorizeViaAuthFlow (apiInstance) {
   return new Promise((resolve, reject) => {
@@ -50,6 +50,12 @@ function getAuthorizedInstance () {
       if (refreshToken) {
         return authorizeWithRefreshToken(apiInstance, refreshToken)
           .then(() => apiInstance)
+          .catch(() => {
+            // If loggin in with the refresh token fails, start the manual auth flow
+            return removeRefreshToken()
+              .then(() => authorizeViaAuthFlow(apiInstance))
+              .then(() => apiInstance)
+          })
       }
 
       return authorizeViaAuthFlow(apiInstance)
