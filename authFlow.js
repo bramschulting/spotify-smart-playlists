@@ -1,7 +1,15 @@
 const express = require('express')
 const http = require('http')
-const { getInstance, authorizeInstance, authorizeWithRefreshToken } = require('./spotifyApi')
-const { getRefreshToken, setRefreshToken, removeRefreshToken } = require('./managers/refreshToken')
+const {
+  getInstance,
+  authorizeInstance,
+  authorizeWithRefreshToken
+} = require('./spotifyApi')
+const {
+  getRefreshToken,
+  setRefreshToken,
+  removeRefreshToken
+} = require('./managers/refreshToken')
 
 function authorizeViaAuthFlow (apiInstance) {
   return new Promise((resolve, reject) => {
@@ -32,12 +40,14 @@ function authorizeViaAuthFlow (apiInstance) {
         .catch(reject)
     })
 
-    server.listen(8080, (err) => {
+    server.listen(8080, err => {
       if (err) {
         return reject(err)
       }
 
-      console.log('Please go to http://localhost:8080/auth to authenticate with your Spotify account')
+      console.log(
+        'Please go to http://localhost:8080/auth to authenticate with your Spotify account'
+      )
     })
   })
 }
@@ -45,22 +55,20 @@ function authorizeViaAuthFlow (apiInstance) {
 function getAuthorizedInstance () {
   const apiInstance = getInstance()
 
-  return getRefreshToken()
-    .then(refreshToken => {
-      if (refreshToken) {
-        return authorizeWithRefreshToken(apiInstance, refreshToken)
-          .then(() => apiInstance)
-          .catch(() => {
-            // If loggin in with the refresh token fails, start the manual auth flow
-            return removeRefreshToken()
-              .then(() => authorizeViaAuthFlow(apiInstance))
-              .then(() => apiInstance)
-          })
-      }
-
-      return authorizeViaAuthFlow(apiInstance)
+  return getRefreshToken().then(refreshToken => {
+    if (refreshToken) {
+      return authorizeWithRefreshToken(apiInstance, refreshToken)
         .then(() => apiInstance)
-    })
+        .catch(() => {
+          // If loggin in with the refresh token fails, start the manual auth flow
+          return removeRefreshToken()
+            .then(() => authorizeViaAuthFlow(apiInstance))
+            .then(() => apiInstance)
+        })
+    }
+
+    return authorizeViaAuthFlow(apiInstance).then(() => apiInstance)
+  })
 }
 
 exports.getAuthorizedInstance = getAuthorizedInstance

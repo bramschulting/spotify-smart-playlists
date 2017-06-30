@@ -10,35 +10,39 @@ exports.getInstance = function getInstance () {
 }
 
 exports.authorizeInstance = function authorizeInstance (apiInstance, code) {
-  return apiInstance.authorizationCodeGrant(code)
-    .then(res => {
-      const {
-        refresh_token: refreshToken,
-        access_token: accessToken
-      } = res.body
+  return apiInstance.authorizationCodeGrant(code).then(res => {
+    const { refresh_token: refreshToken, access_token: accessToken } = res.body
 
-      apiInstance.setAccessToken(accessToken)
-      apiInstance.setRefreshToken(refreshToken)
+    apiInstance.setAccessToken(accessToken)
+    apiInstance.setRefreshToken(refreshToken)
 
-      return { refreshToken, accessToken }
-    })
+    return { refreshToken, accessToken }
+  })
 }
 
-exports.authorizeWithRefreshToken = function authorizeWithRefreshToken (apiInstance, refreshToken) {
+exports.authorizeWithRefreshToken = function authorizeWithRefreshToken (
+  apiInstance,
+  refreshToken
+) {
   apiInstance.setRefreshToken(refreshToken)
-  return apiInstance.refreshAccessToken()
-    .then(res => {
-      apiInstance.setAccessToken(res.body.access_token)
+  return apiInstance.refreshAccessToken().then(res => {
+    apiInstance.setAccessToken(res.body.access_token)
 
-      return null
-    })
+    return null
+  })
 }
 
-exports.getPlaylistTracks = function getPlaylistTracks (apiInstance, userId, playlistId, options) {
+exports.getPlaylistTracks = function getPlaylistTracks (
+  apiInstance,
+  userId,
+  playlistId,
+  options
+) {
   let tracks = []
 
   function getRecursive (offset = 0, limit = 100, resolve, reject) {
-    apiInstance.getPlaylistTracks(userId, playlistId, { offset, limit })
+    apiInstance
+      .getPlaylistTracks(userId, playlistId, { offset, limit })
       .then(res => {
         // Append the new tracks to the existing array
         tracks = tracks.concat(res.body.items)
@@ -60,6 +64,11 @@ exports.getPlaylistTracks = function getPlaylistTracks (apiInstance, userId, pla
   })
 }
 
-exports.replaceTracksInPlaylist = function replaceTracksInPlaylist (apiInstance, userId, playlistId, trackUris) {
+exports.replaceTracksInPlaylist = function replaceTracksInPlaylist (
+  apiInstance,
+  userId,
+  playlistId,
+  trackUris
+) {
   return apiInstance.replaceTracksInPlaylist(userId, playlistId, trackUris)
 }

@@ -5,21 +5,19 @@ function getStorage () {
     dir: './user_data'
   }
 
-  return storage.init(storageOptions)
-    .then(() => storage)
+  return storage.init(storageOptions).then(() => storage)
 }
 
 exports.getRefreshToken = function getRefreshToken () {
-  return getStorage()
-    .then(storage => storage.getItem('refreshToken'))
+  return getStorage().then(storage => storage.getItem('refreshToken'))
 }
 
 exports.setRefreshToken = function setRefreshToken (refreshToken) {
-  return getStorage()
-    .then(storage => storage.setItem('refreshToken', refreshToken))
+  return getStorage().then(storage =>
+    storage.setItem('refreshToken', refreshToken)
+  )
 }
 
 exports.removeRefreshToken = function removeRefreshToken () {
-  return getStorage()
-    .then(storage => storage.removeItem('refreshToken'))
+  return getStorage().then(storage => storage.removeItem('refreshToken'))
 }
