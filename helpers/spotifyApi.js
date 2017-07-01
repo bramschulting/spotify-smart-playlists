@@ -1,12 +1,7 @@
 const SpotifyWebApi = require('spotify-web-api-node')
-const config = require('config')
 
-exports.getInstance = function getInstance () {
-  return new SpotifyWebApi({
-    clientId: config.get('clientId'),
-    clientSecret: config.get('clientSecret'),
-    redirectUri: config.get('redirectUri')
-  })
+exports.getInstance = function getInstance (options) {
+  return new SpotifyWebApi(options)
 }
 
 exports.authorizeInstance = function authorizeInstance (apiInstance, code) {

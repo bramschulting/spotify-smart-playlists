@@ -4,12 +4,12 @@ const {
   getInstance,
   authorizeInstance,
   authorizeWithRefreshToken
-} = require('./spotifyApi')
+} = require('../helpers/spotifyApi')
 const {
   getRefreshToken,
   setRefreshToken,
   removeRefreshToken
-} = require('./managers/refreshToken')
+} = require('../managers/refreshToken')
 
 function authorizeViaAuthFlow (apiInstance) {
   return new Promise((resolve, reject) => {
@@ -52,8 +52,8 @@ function authorizeViaAuthFlow (apiInstance) {
   })
 }
 
-function getAuthorizedInstance () {
-  const apiInstance = getInstance()
+function getAuthorizedInstance (options = {}) {
+  const apiInstance = getInstance(options)
 
   return getRefreshToken().then(refreshToken => {
     if (refreshToken) {
