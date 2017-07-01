@@ -18,12 +18,15 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "husky": "^0.14.1",
+    "jest": "^20.0.4",
     "lint-staged": "^4.0.0",
     "prettier-eslint": "^6.4.1",
     "prettier-eslint-cli": "^4.1.1"
   },
   "scripts": {
-    "test": "eslint .",
+    "test": "yarn test:unit && test:unit",
+    "test:lint": "eslint .",
+    "test:unit": "jest",
     "precommit": "lint-staged"
   },
   "lint-staged": {
