@@ -21,17 +21,17 @@ exports.authorizeWithRefreshToken = function authorizeWithRefreshToken (
 ) {
   apiInstance.setRefreshToken(refreshToken)
   return apiInstance.refreshAccessToken().then(res => {
-    apiInstance.setAccessToken(res.body.access_token)
+    const { access_token: accessToken } = res.body
+    apiInstance.setAccessToken(accessToken)
 
-    return null
+    return { accessToken }
   })
 }
 
 exports.getPlaylistTracks = function getPlaylistTracks (
   apiInstance,
   userId,
-  playlistId,
-  options
+  playlistId
 ) {
   let tracks = []
 

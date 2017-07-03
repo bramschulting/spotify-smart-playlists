@@ -24,16 +24,13 @@
     "prettier-eslint-cli": "^4.1.1"
   },
   "scripts": {
-    "test": "yarn test:unit && test:unit",
+    "test": "yarn test:lint && yarn test:unit",
     "test:lint": "eslint .",
-    "test:unit": "jest",
+    "test:unit": "jest --coverage",
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": [
-      "prettier-eslint --write \"./**/*.js\"",
-      "git add"
-    ]
+    "*.js": ["prettier-eslint --write \"./**/*.js\"", "git add"]
   },
   "keywords": [],
   "author": "",
