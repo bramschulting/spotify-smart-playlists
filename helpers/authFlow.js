@@ -1,15 +1,7 @@
 const express = require('express')
 const http = require('http')
-const {
-  getInstance,
-  authorizeInstance,
-  authorizeWithRefreshToken
-} = require('../helpers/spotifyApi')
-const {
-  getRefreshToken,
-  setRefreshToken,
-  removeRefreshToken
-} = require('../managers/refreshToken')
+const spotifyApiHelper = require('../helpers/spotifyApi')
+const refreshTokenManager = require('../managers/refreshToken')
 
 function authorizeViaAuthFlow (apiInstance) {
   return new Promise((resolve, reject) => {
@@ -27,14 +19,15 @@ function authorizeViaAuthFlow (apiInstance) {
         return reject(new Error('state mismatch'))
       }
 
-      authorizeInstance(apiInstance, req.query.code)
+      spotifyApiHelper
+        .authorizeInstance(apiInstance, req.query.code)
         .then(({ refreshToken }) => {
           res.send('Successfully authenticated! You can close this page.').end()
 
           // Close the auth server
           server.close()
 
-          return setRefreshToken(refreshToken)
+          return refreshTokenManager.setRefreshToken(refreshToken)
         })
         .then(resolve)
         .catch(reject)
@@ -52,23 +45,4 @@ function authorizeViaAuthFlow (apiInstance) {
   })
 }
 
-function getAuthorizedInstance (options = {}) {
-  const apiInstance = getInstance(options)
-
-  return getRefreshToken().then(refreshToken => {
-    if (refreshToken) {
-      return authorizeWithRefreshToken(apiInstance, refreshToken)
-        .then(() => apiInstance)
-        .catch(() => {
-          // If loggin in with the refresh token fails, start the manual auth flow
-          return removeRefreshToken()
-            .then(() => authorizeViaAuthFlow(apiInstance))
-            .then(() => apiInstance)
-        })
-    }
-
-    return authorizeViaAuthFlow(apiInstance).then(() => apiInstance)
-  })
-}
-
-exports.getAuthorizedInstance = getAuthorizedInstance
+exports.authorizeViaAuthFlow = authorizeViaAuthFlow
