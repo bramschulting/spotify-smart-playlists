@@ -24,7 +24,7 @@ exports.getPlaylistTracks = function getPlaylistTracks (
 ) {
   let tracks = []
 
-  function getRecursive (offset = 0, limit = 100, resolve, reject) {
+  function getRecursive (offset, limit, resolve, reject) {
     apiInstance
       .getPlaylistTracks(userId, playlistId, { offset, limit })
       .then(res => {
