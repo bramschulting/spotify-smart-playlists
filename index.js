@@ -1,3 +1,3 @@
-const SmartPlaylistGenerator = require('./classes/SmartPlaylistGenerator')
+const SmartPlaylistsGenerator = require('./classes/SmartPlaylistsGenerator')
 
-module.exports = SmartPlaylistGenerator
+module.exports = SmartPlaylistsGenerator

@@ -1,13 +1,13 @@
-const SmartPlaylistGenerator = require('../index')
+const SmartPlaylistsGenerator = require('../index')
 const config = require('config')
 
-// Create a new SmartPlaylistGenerator instance..
+// Create a new SmartPlaylistsGenerator instance..
 const options = {
   clientId: config.get('clientId'),
   clientSecret: config.get('clientSecret'),
   refreshToken: config.get('refreshToken')
 }
-const generator = new SmartPlaylistGenerator(options)
+const generator = new SmartPlaylistsGenerator(options)
 
 // ..add the playlist(s)..
 const simpleExample = require('./example-simple')

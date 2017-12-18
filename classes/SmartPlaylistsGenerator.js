@@ -6,7 +6,7 @@ const {
 const { map } = require('ramda')
 const { trackUri } = require('../selectors/track')
 
-class SmartPlaylistGenerator {
+class SmartPlaylistsGenerator {
   constructor (options = {}) {
     // TODO: Validate options
 
@@ -51,4 +51,4 @@ class SmartPlaylistGenerator {
   }
 }
 
-module.exports = SmartPlaylistGenerator
+module.exports = SmartPlaylistsGenerator
