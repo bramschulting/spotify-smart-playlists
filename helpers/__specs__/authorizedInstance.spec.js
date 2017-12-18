@@ -1,11 +1,7 @@
 const authorizedInstanceHelper = require('../authorizedInstance')
-const authFlowHelper = require('../authFlow')
 const spotifyApiHelper = require('../spotifyApi')
-const refreshTokenManager = require('../../managers/refreshToken')
 
 jest.mock('../spotifyApi')
-jest.mock('../authFlow')
-jest.mock('../../managers/refreshToken')
 
 describe('authFlow helper', () => {
   beforeEach(() => {
@@ -14,7 +10,7 @@ describe('authFlow helper', () => {
 
   it('should get a new api instances based on the passed options', () => {
     const options = { foo: 'bar' }
-    refreshTokenManager.getRefreshToken = jest.fn(() =>
+    spotifyApiHelper.authorizeWithRefreshToken = jest.fn(() =>
       Promise.reject(new Error())
     )
 
@@ -24,75 +20,23 @@ describe('authFlow helper', () => {
     })
   })
 
-  describe('with spotify auth flow', () => {
-    beforeEach(() => {
-      refreshTokenManager.getRefreshToken = jest.fn(() => Promise.resolve(null))
-    })
+  it('should return a new api instance if the authorization is successful', () => {
+    const refreshToken = 'some-refresh-token'
+    const options = { refreshToken }
 
-    it('should start the spotify auth flow if there is no refresh token', () => {
-      spotifyApiHelper.authorizeViaAuthFlow = jest.fn(() =>
-        Promise.reject(new Error())
-      )
+    spotifyApiHelper.getInstance = jest.fn(() => 'apiInstance')
 
-      return authorizedInstanceHelper.getAuthorizedInstance().catch(() => {
-        expect(authFlowHelper.authorizeViaAuthFlow).toHaveBeenCalledTimes(1)
+    spotifyApiHelper.authorizeWithRefreshToken = jest.fn(() =>
+      Promise.resolve()
+    )
+
+    return authorizedInstanceHelper
+      .getAuthorizedInstance(options)
+      .then(apiInstance => {
+        expect(spotifyApiHelper.authorizeWithRefreshToken).toHaveBeenCalledWith(
+          apiInstance,
+          refreshToken
+        )
       })
-    })
-  })
-
-  describe('with stored refreshToken', () => {
-    const options = {}
-    const refreshToken = 'some refreshToken'
-    beforeEach(() => {
-      refreshTokenManager.getRefreshToken = jest.fn(() =>
-        Promise.resolve(refreshToken)
-      )
-    })
-
-    it('should try to authorize with the refresh token', () => {
-      spotifyApiHelper.authorizeWithRefreshToken = jest.fn(() =>
-        Promise.reject(new Error())
-      )
-
-      return authorizedInstanceHelper
-        .getAuthorizedInstance(options)
-        .catch(() => {
-          expect(
-            spotifyApiHelper.authorizeWithRefreshToken
-          ).toHaveBeenCalledTimes(1)
-          expect(
-            spotifyApiHelper.authorizeWithRefreshToken
-          ).toHaveBeenCalledWith(
-            spotifyApiHelper.getInstance(options),
-            refreshToken
-          )
-        })
-    })
-
-    it('should return an authorized apiInstance if all goes well', () => {
-      spotifyApiHelper.authorizeWithRefreshToken = jest.fn(() =>
-        Promise.resolve()
-      )
-
-      return authorizedInstanceHelper
-        .getAuthorizedInstance(options)
-        .then(resolvedInstance => {
-          expect(resolvedInstance).toEqual(
-            spotifyApiHelper.getInstance(options)
-          )
-        })
-    })
-
-    it('should start the spotify auth flow if authorizing with a refresh token fails', () => {
-      spotifyApiHelper.authorizeWithRefreshToken = jest.fn(() =>
-        Promise.reject(new Error())
-      )
-
-      return authorizedInstanceHelper
-        .getAuthorizedInstance(options)
-        .then(() => {
-          expect(authFlowHelper.authorizeViaAuthFlow).toHaveBeenCalledTimes(1)
-        })
-    })
   })
 })

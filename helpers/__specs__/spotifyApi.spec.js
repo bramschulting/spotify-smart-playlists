@@ -22,39 +22,6 @@ describe('spotifyApi helper', () => {
     })
   })
 
-  describe('authorizeInstance', () => {
-    it('should attempt to authorize with the passed code', () => {
-      const code = 'some code'
-
-      return spotifyApiHelpers.authorizeInstance(apiInstance, code).then(() => {
-        expect(apiInstance.authorizationCodeGrant).toHaveBeenCalledTimes(1)
-        expect(apiInstance.authorizationCodeGrant).toHaveBeenCalledWith(code)
-      })
-    })
-
-    it('should set the access token of the passed instance', () => {
-      const code = 'some code'
-
-      return spotifyApiHelpers
-        .authorizeInstance(apiInstance, code)
-        .then(({ accessToken }) => {
-          expect(apiInstance.setAccessToken).toHaveBeenCalledTimes(1)
-          expect(apiInstance.setAccessToken).toHaveBeenCalledWith(accessToken)
-        })
-    })
-
-    it('should set the refresh token of the passed instance', () => {
-      const code = 'some code'
-
-      return spotifyApiHelpers
-        .authorizeInstance(apiInstance, code)
-        .then(({ refreshToken }) => {
-          expect(apiInstance.setRefreshToken).toHaveBeenCalledTimes(1)
-          expect(apiInstance.setRefreshToken).toHaveBeenCalledWith(refreshToken)
-        })
-    })
-  })
-
   describe('authorizeWithRefreshToken', () => {
     it('should set the refresh token of the passed instance', () => {
       const refreshToken = 'some refresh token'

@@ -4,17 +4,6 @@ exports.getInstance = function getInstance (options) {
   return new SpotifyWebApi(options)
 }
 
-exports.authorizeInstance = function authorizeInstance (apiInstance, code) {
-  return apiInstance.authorizationCodeGrant(code).then(res => {
-    const { refresh_token: refreshToken, access_token: accessToken } = res.body
-
-    apiInstance.setAccessToken(accessToken)
-    apiInstance.setRefreshToken(refreshToken)
-
-    return { refreshToken, accessToken }
-  })
-}
-
 exports.authorizeWithRefreshToken = function authorizeWithRefreshToken (
   apiInstance,
   refreshToken

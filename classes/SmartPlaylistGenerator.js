@@ -1,4 +1,4 @@
-const { getAuthorizedInstance } = require('../helpers/authFlow')
+const { getAuthorizedInstance } = require('../helpers/authorizedInstance')
 const {
   getPlaylistTracks,
   replaceTracksInPlaylist

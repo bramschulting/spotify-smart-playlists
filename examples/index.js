@@ -5,7 +5,8 @@ const config = require('config')
 const options = {
   clientId: config.get('clientId'),
   clientSecret: config.get('clientSecret'),
-  redirectUri: config.get('redirectUri')
+  // redirectUri: config.get('redirectUri'),
+  refreshToken: config.get('refreshToken')
 }
 const generator = new SmartPlaylistGenerator(options)
 
