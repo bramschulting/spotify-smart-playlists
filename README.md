@@ -7,7 +7,7 @@ This package can be used to generate smart playlists for Spotify. It's inspired 
 This package is available at npmjs.com, so you can install it using `npm`, `yarn`, or other package managers that support npmjs.com.
 
 ```shell
-$ yard add spotify-smart-playlists
+$ yarn add spotify-smart-playlists
 ```
 
 ## Example
