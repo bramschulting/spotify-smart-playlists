@@ -27,12 +27,9 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": [
-      "prettier-eslint --write \"./**/*.js\"",
-      "git add"
-    ]
+    "*.js": ["prettier-eslint --write \"./**/*.js\"", "git add"]
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": ["spotify", "playlist", "playlists", "generator"],
+  "author": "Bram Schulting",
+  "license": "MIT"
 }
