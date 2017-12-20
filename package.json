@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "express": "^4.15.3",
     "ramda": "^0.24.1",
     "spotify-web-api-node": "^2.4.0"
   },
