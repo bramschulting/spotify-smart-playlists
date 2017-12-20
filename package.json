@@ -31,5 +31,10 @@
   },
   "keywords": ["spotify", "playlist", "playlists", "generator"],
   "author": "Bram Schulting",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:bramschulting/spotify-smart-playlists.git"
+  }
 }
+
