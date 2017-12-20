@@ -1,6 +1,6 @@
 {
   "name": "spotify-smart-playlists",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generate smart playlists for Spotify",
   "main": "index.js",
   "dependencies": {
@@ -27,9 +27,17 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": ["prettier-eslint --write \"./**/*.js\"", "git add"]
+    "*.js": [
+      "prettier-eslint --write \"./**/*.js\"",
+      "git add"
+    ]
   },
-  "keywords": ["spotify", "playlist", "playlists", "generator"],
+  "keywords": [
+    "spotify",
+    "playlist",
+    "playlists",
+    "generator"
+  ],
   "author": "Bram Schulting",
   "license": "MIT",
   "repository": {
