@@ -11,11 +11,11 @@ class SmartPlaylistsGenerator {
     this.playlistGenerators = []
   }
 
-  addPlaylist (inputPlaylist, outputPlaylist, generator) {
+  addPlaylist (loader, outputPlaylist, generator) {
     // TODO: Validate input
 
     this.playlistGenerators.push({
-      inputPlaylist,
+      loader,
       outputPlaylist,
       generator
     })
@@ -31,12 +31,8 @@ class SmartPlaylistsGenerator {
         // Generate each playlist
         const generatorPromises = this.playlistGenerators.map(
           playlistGenerator =>
-            spotifyApiHelper
-              .getPlaylistTracks(
-                apiInstance,
-                playlistGenerator.inputPlaylist.userId,
-                playlistGenerator.inputPlaylist.id
-              )
+            playlistGenerator.loader
+              .getTracks(apiInstance)
               .then(playlistGenerator.generator)
               .then(map(trackUri))
               .then(trackUris =>
