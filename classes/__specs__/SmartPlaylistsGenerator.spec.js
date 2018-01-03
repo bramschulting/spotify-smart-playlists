@@ -22,15 +22,15 @@ describe('SmartPlaylistsGenerator', () => {
 
   describe('addPlaylist', () => {
     it('should store a playlist generator', () => {
-      const loader = 'some loader'
+      const loaders = ['some loader']
       const outputPlaylist = 'some output playlist'
       const generatorFunction = 'some generator function'
 
       const generator = new SmartPlaylistsGenerator()
-      generator.addPlaylist(loader, outputPlaylist, generatorFunction)
+      generator.addPlaylist(loaders, outputPlaylist, generatorFunction)
 
       expect(generator.playlistGenerators).toHaveLength(1)
-      expect(generator.playlistGenerators[0].loader).toEqual(loader)
+      expect(generator.playlistGenerators[0].loaders).toEqual(loaders)
       expect(generator.playlistGenerators[0].outputPlaylist).toEqual(
         outputPlaylist
       )
@@ -60,26 +60,33 @@ describe('SmartPlaylistsGenerator', () => {
     })
   })
 
-  it('should get the input tracks for each playlist', () => {
+  it('should get the tracks of all loaders for each playlist', () => {
     // Arrange
     const apiInstance = 'apiInstance'
     authorizedInstanceHelper.getAuthorizedInstance = () =>
       Promise.resolve(apiInstance)
 
     const generator = new SmartPlaylistsGenerator()
-    const loader = {
+    const loader1 = {
       getTracks: jest.fn(() => Promise.reject(new Error()))
     }
+    const loader2 = {
+      getTracks: jest.fn(() => Promise.reject(new Error()))
+    }
+    const loaders = [loader1, loader2]
     const outputPlaylist = 'some output playlist'
     const generatorFunction = 'some generator function'
 
-    generator.addPlaylist(loader, outputPlaylist, generatorFunction)
+    generator.addPlaylist(loaders, outputPlaylist, generatorFunction)
 
     // Act
     return generator.generatePlaylists().catch(() => {
       // Assert
-      expect(loader.getTracks).toHaveBeenCalledTimes(1)
-      expect(loader.getTracks).toHaveBeenCalledWith(apiInstance)
+      expect(loader1.getTracks).toHaveBeenCalledTimes(1)
+      expect(loader1.getTracks).toHaveBeenCalledWith(apiInstance)
+
+      expect(loader2.getTracks).toHaveBeenCalledTimes(1)
+      expect(loader2.getTracks).toHaveBeenCalledWith(apiInstance)
     })
   })
 
@@ -98,13 +105,13 @@ describe('SmartPlaylistsGenerator', () => {
     const outputPlaylist = 'some output playlist'
     const generatorFunction = jest.fn()
 
-    generator.addPlaylist(loader, outputPlaylist, generatorFunction)
+    generator.addPlaylist([loader], outputPlaylist, generatorFunction)
 
     // Act
     return generator.generatePlaylists().catch(() => {
       // Assert
       expect(generatorFunction).toHaveBeenCalledTimes(1)
-      expect(generatorFunction).toHaveBeenCalledWith(inputPlaylistTracks)
+      expect(generatorFunction).toHaveBeenCalledWith([inputPlaylistTracks])
     })
   })
 
@@ -124,9 +131,9 @@ describe('SmartPlaylistsGenerator', () => {
       userId: 'output-userId',
       id: 'output-id'
     }
-    const generatorFunction = jest.fn(inputTracks => inputTracks)
+    const generatorFunction = jest.fn(loaderResults => loaderResults[0])
 
-    generator.addPlaylist(loader, outputPlaylist, generatorFunction)
+    generator.addPlaylist([loader], outputPlaylist, generatorFunction)
 
     // Act
     return generator.generatePlaylists().then(() => {
