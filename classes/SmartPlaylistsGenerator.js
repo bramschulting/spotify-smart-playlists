@@ -3,6 +3,10 @@ const spotifyApiHelper = require('../helpers/spotifyApi')
 const { map } = require('ramda')
 const { trackUri } = require('../selectors/track')
 
+function loadLoaders (apiInstance, loaders) {
+  return Promise.all(loaders.map(loader => loader.getTracks(apiInstance)))
+}
+
 class SmartPlaylistsGenerator {
   constructor (options) {
     // TODO: Validate options
@@ -11,11 +15,11 @@ class SmartPlaylistsGenerator {
     this.playlistGenerators = []
   }
 
-  addPlaylist (loader, outputPlaylist, generator) {
+  addPlaylist (loaders, outputPlaylist, generator) {
     // TODO: Validate input
 
     this.playlistGenerators.push({
-      loader,
+      loaders,
       outputPlaylist,
       generator
     })
@@ -31,8 +35,7 @@ class SmartPlaylistsGenerator {
         // Generate each playlist
         const generatorPromises = this.playlistGenerators.map(
           playlistGenerator =>
-            playlistGenerator.loader
-              .getTracks(apiInstance)
+            loadLoaders(apiInstance, playlistGenerator.loaders)
               .then(playlistGenerator.generator)
               .then(map(trackUri))
               .then(trackUris =>
