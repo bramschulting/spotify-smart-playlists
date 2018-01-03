@@ -1,6 +1,6 @@
 {
   "name": "spotify-smart-playlists",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Generate smart playlists for Spotify",
   "main": "index.js",
   "dependencies": {
