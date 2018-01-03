@@ -14,7 +14,7 @@ $ yarn add spotify-smart-playlists
 
 ```javascript
 const { SmartPlaylistsGenerator, PlaylistLoader } = require('spotify-smart-playlists')
-const { compose, reverse, take } = require('ramda')
+const { compose, reverse, take, flatten } = require('ramda')
 
 // Initiate a new SmartPlaylistsGenerator instance. Please take a look at
 // Spotify's documentation to learn how to get the required params:
@@ -25,15 +25,15 @@ const smartPlaylists = new SmartPlaylistsGenerator({
   refreshToken: 'your refresh token'
 })
 
-// In this example we that one playlist as input, reverse the order, and take the
+// In this example we take one playlist as input, reverse the order, and take the
 // first 20 tracks (which are actually the 20 last tracks, since the order is
 // reversed)
 const loader = new PlaylistLoader('bramschulting', '4tWeRdIYH4ZPo5vvJIPJFm')
 const outputPlaylist = { id: '7a81cTH5K8MUF6geWYZahA', userId: 'bramschulting' }
-const generator = compose(take(20), reverse)
+const generator = compose(take(20), reverse, flatten)
 
 // Add the playlist generator to our instance
-smartPlaylists.addPlaylist(loader, outputPlaylist, generator)
+smartPlaylists.addPlaylist([loader], outputPlaylist, generator)
 
 // Run your playlist generator(s)
 smartPlaylists.generatePlaylists()
