@@ -1,17 +1,12 @@
 const spotifyApiHelper = require('../helpers/spotifyApi')
 
 class PlaylistLoader {
-  constructor (userId, playlistId) {
-    this.userId = userId
+  constructor (playlistId) {
     this.playlistId = playlistId
   }
 
   getTracks (apiInstance) {
-    return spotifyApiHelper.getPlaylistTracks(
-      apiInstance,
-      this.userId,
-      this.playlistId
-    )
+    return spotifyApiHelper.getPlaylistTracks(apiInstance, this.playlistId)
   }
 }
 
