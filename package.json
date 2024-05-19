@@ -1,6 +1,6 @@
 {
   "name": "spotify-smart-playlists",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "Generate smart playlists for Spotify",
   "main": "index.js",
   "dependencies": {
@@ -43,6 +43,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git@github.com:bramschulting/spotify-smart-playlists.git"
+    "url": "git+ssh://git@github.com/bramschulting/spotify-smart-playlists.git"
   }
 }
