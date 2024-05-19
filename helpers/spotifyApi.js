@@ -26,16 +26,12 @@ const spotifyApiHelper = {
     })
   },
 
-  getPlaylistTracks: function getPlaylistTracks (
-    apiInstance,
-    userId,
-    playlistId
-  ) {
+  getPlaylistTracks: function getPlaylistTracks (apiInstance, playlistId) {
     let tracks = []
 
     function getRecursive (offset, limit, resolve, reject) {
       apiInstance
-        .getPlaylistTracks(userId, playlistId, { offset, limit })
+        .getPlaylistTracks(playlistId, { offset, limit })
         .then(res => {
           // Append the new tracks to the existing array
           tracks = tracks.concat(res.body.items)
@@ -59,7 +55,6 @@ const spotifyApiHelper = {
 
   removePlaylistTracks: function removePlaylistTracks (
     apiInstance,
-    userId,
     playlistId,
     trackUris
   ) {
@@ -69,14 +64,13 @@ const spotifyApiHelper = {
 
     return Promise.all(
       batches.map(batch =>
-        apiInstance.removeTracksFromPlaylist(userId, playlistId, batch)
+        apiInstance.removeTracksFromPlaylist(playlistId, batch)
       )
     )
   },
 
   addPlaylistTracks: function addPlaylistTracks (
     apiInstance,
-    userId,
     playlistId,
     trackUris
   ) {
@@ -86,36 +80,28 @@ const spotifyApiHelper = {
     // same as the order of the array (to unsure the tracks are added in the correct order)
     return waterfall(
       batches.map(batch => () =>
-        apiInstance.addTracksToPlaylist(userId, playlistId, batch)
+        apiInstance.addTracksToPlaylist(playlistId, batch)
       )
     )
   },
 
   replaceTracksInPlaylist: function replaceTracksInPlaylist (
     apiInstance,
-    userId,
     playlistId,
     trackUris
   ) {
     // The Spotify API only allows us to replace a limited number of tracks at once
     if (trackUris.length <= REPLACE_TRACKS_LIMIT) {
-      return apiInstance.replaceTracksInPlaylist(userId, playlistId, trackUris)
+      return apiInstance.replaceTracksInPlaylist(playlistId, trackUris)
     }
 
     // If the limit is exceeded, we need to manually clear the playlist and batch-add tracks to it
-    return this.getPlaylistTracks(apiInstance, userId, playlistId)
+    return this.getPlaylistTracks(apiInstance, playlistId)
       .then(map(trackUri))
       .then(currentTrackUris =>
-        this.removePlaylistTracks(
-          apiInstance,
-          userId,
-          playlistId,
-          currentTrackUris
-        )
+        this.removePlaylistTracks(apiInstance, playlistId, currentTrackUris)
       )
-      .then(() =>
-        this.addPlaylistTracks(apiInstance, userId, playlistId, trackUris)
-      )
+      .then(() => this.addPlaylistTracks(apiInstance, playlistId, trackUris))
   }
 }
 

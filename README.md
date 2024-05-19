@@ -28,12 +28,12 @@ const smartPlaylists = new SmartPlaylistsGenerator({
 // In this example we take one playlist as input, reverse the order, and take the
 // first 20 tracks (which are actually the 20 last tracks, since the order is
 // reversed)
-const loader = new PlaylistLoader('bramschulting', '4tWeRdIYH4ZPo5vvJIPJFm')
-const outputPlaylist = { id: '7a81cTH5K8MUF6geWYZahA', userId: 'bramschulting' }
+const loader = new PlaylistLoader('4tWeRdIYH4ZPo5vvJIPJFm')
+const outputPlaylistId = '7a81cTH5K8MUF6geWYZahA'
 const generator = compose(take(20), reverse, flatten)
 
 // Add the playlist generator to our instance
-smartPlaylists.addPlaylist([loader], outputPlaylist, generator)
+smartPlaylists.addPlaylist([loader], outputPlaylistId, generator)
 
 // Run your playlist generator(s)
 smartPlaylists.generatePlaylists()

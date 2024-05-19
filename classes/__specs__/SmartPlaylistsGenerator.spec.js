@@ -31,7 +31,7 @@ describe('SmartPlaylistsGenerator', () => {
 
       expect(generator.playlistGenerators).toHaveLength(1)
       expect(generator.playlistGenerators[0].loaders).toEqual(loaders)
-      expect(generator.playlistGenerators[0].outputPlaylist).toEqual(
+      expect(generator.playlistGenerators[0].outputPlaylistId).toEqual(
         outputPlaylist
       )
       expect(generator.playlistGenerators[0].generator).toEqual(
@@ -127,24 +127,18 @@ describe('SmartPlaylistsGenerator', () => {
     const loader = {
       getTracks: () => Promise.resolve(inputPlaylistTracks)
     }
-    const outputPlaylist = {
-      userId: 'output-userId',
-      id: 'output-id'
-    }
+    const outputPlaylistId = 'output-id'
     const generatorFunction = jest.fn(loaderResults => loaderResults[0])
 
-    generator.addPlaylist([loader], outputPlaylist, generatorFunction)
+    generator.addPlaylist([loader], outputPlaylistId, generatorFunction)
 
     // Act
     return generator.generatePlaylists().then(() => {
       // Assert
       expect(spotifyApiHelper.replaceTracksInPlaylist).toHaveBeenCalledTimes(1)
-      expect(spotifyApiHelper.replaceTracksInPlaylist).toHaveBeenCalledWith(
-        apiInstance,
-        outputPlaylist.userId,
-        outputPlaylist.id,
-        ['track-uid']
-      )
+      expect(
+        spotifyApiHelper.replaceTracksInPlaylist
+      ).toHaveBeenCalledWith(apiInstance, outputPlaylistId, ['track-uid'])
     })
   })
 })

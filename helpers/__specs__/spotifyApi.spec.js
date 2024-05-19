@@ -59,7 +59,6 @@ describe('spotifyApi helper', () => {
 
   describe('getPlaylistTracks', () => {
     it('should recursively get all tracks in a playlist', () => {
-      const userId = 'bramschulting'
       const playlistId = '5318008'
 
       const firstBatchResult = {
@@ -81,22 +80,14 @@ describe('spotifyApi helper', () => {
         .mockImplementationOnce(() => Promise.resolve(secondBatchResult))
 
       return spotifyApiHelpers
-        .getPlaylistTracks(apiInstance, userId, playlistId)
+        .getPlaylistTracks(apiInstance, playlistId)
         .then(tracks => {
           expect(apiInstance.getPlaylistTracks).toHaveBeenCalledTimes(2)
 
           const { calls } = apiInstance.getPlaylistTracks.mock
 
-          expect(calls[0]).toEqual([
-            userId,
-            playlistId,
-            { offset: 0, limit: 100 }
-          ])
-          expect(calls[1]).toEqual([
-            userId,
-            playlistId,
-            { offset: 100, limit: 100 }
-          ])
+          expect(calls[0]).toEqual([playlistId, { offset: 0, limit: 100 }])
+          expect(calls[1]).toEqual([playlistId, { offset: 100, limit: 100 }])
 
           expect(tracks).toHaveLength(142)
         })
@@ -107,25 +98,22 @@ describe('spotifyApi helper', () => {
     it('should remove the passed tracks in batches', () => {
       apiInstance.removeTracksFromPlaylist = jest.fn(() => Promise.resolve())
 
-      const userId = 'bramschulting'
       const playlistId = '5318008'
       const trackUris = new Array(REPLACE_TRACKS_LIMIT + 1).fill('some-uri')
 
       return spotifyApiHelpers
-        .removePlaylistTracks(apiInstance, userId, playlistId, trackUris)
+        .removePlaylistTracks(apiInstance, playlistId, trackUris)
         .then(() => {
           expect(apiInstance.removeTracksFromPlaylist).toHaveBeenCalledTimes(2)
 
           // First batch
           expect(apiInstance.removeTracksFromPlaylist).toHaveBeenCalledWith(
-            userId,
             playlistId,
             trackUris.slice(0, REPLACE_TRACKS_LIMIT).map(uri => ({ uri }))
           )
 
           // Second batch
           expect(apiInstance.removeTracksFromPlaylist).toHaveBeenCalledWith(
-            userId,
             playlistId,
             trackUris
               .slice(REPLACE_TRACKS_LIMIT, REPLACE_TRACKS_LIMIT + 1)
@@ -139,25 +127,22 @@ describe('spotifyApi helper', () => {
     it('should add the passed tracks in batches', () => {
       apiInstance.addTracksToPlaylist = jest.fn(() => Promise.resolve())
 
-      const userId = 'bramschulting'
       const playlistId = '5318008'
       const trackUris = new Array(REPLACE_TRACKS_LIMIT + 1)
 
       return spotifyApiHelpers
-        .addPlaylistTracks(apiInstance, userId, playlistId, trackUris)
+        .addPlaylistTracks(apiInstance, playlistId, trackUris)
         .then(() => {
           expect(apiInstance.addTracksToPlaylist).toHaveBeenCalledTimes(2)
 
           // First batch
           expect(apiInstance.addTracksToPlaylist).toHaveBeenCalledWith(
-            userId,
             playlistId,
             trackUris.slice(0, REPLACE_TRACKS_LIMIT)
           )
 
           // Second batch
           expect(apiInstance.addTracksToPlaylist).toHaveBeenCalledWith(
-            userId,
             playlistId,
             trackUris.slice(REPLACE_TRACKS_LIMIT, REPLACE_TRACKS_LIMIT + 1)
           )
@@ -168,16 +153,14 @@ describe('spotifyApi helper', () => {
   describe('replaceTracksInPlaylist', () => {
     describe('within the API limit', () => {
       it('should attempt to replace all tracks at once', () => {
-        const userId = 'bramschulting'
         const playlistId = '5318008'
         const trackUris = ['first uri', 'second uri']
 
         return spotifyApiHelpers
-          .replaceTracksInPlaylist(apiInstance, userId, playlistId, trackUris)
+          .replaceTracksInPlaylist(apiInstance, playlistId, trackUris)
           .then(() => {
             expect(apiInstance.replaceTracksInPlaylist).toHaveBeenCalledTimes(1)
             expect(apiInstance.replaceTracksInPlaylist).toHaveBeenCalledWith(
-              userId,
               playlistId,
               trackUris
             )
@@ -191,12 +174,11 @@ describe('spotifyApi helper', () => {
           Promise.reject(new Error())
         )
 
-        const userId = 'bramschulting'
         const playlistId = '5318008'
         const trackUris = new Array(REPLACE_TRACKS_LIMIT + 1)
 
         return spotifyApiHelpers
-          .replaceTracksInPlaylist(apiInstance, userId, playlistId, trackUris)
+          .replaceTracksInPlaylist(apiInstance, playlistId, trackUris)
           .catch(() => {
             // Should not have used the automatic function
             expect(apiInstance.replaceTracksInPlaylist).toHaveBeenCalledTimes(0)
@@ -204,7 +186,6 @@ describe('spotifyApi helper', () => {
             expect(spotifyApiHelpers.getPlaylistTracks).toHaveBeenCalledTimes(1)
             expect(spotifyApiHelpers.getPlaylistTracks).toHaveBeenCalledWith(
               apiInstance,
-              userId,
               playlistId
             )
           })
@@ -219,19 +200,17 @@ describe('spotifyApi helper', () => {
           Promise.reject(new Error())
         )
 
-        const userId = 'bramschulting'
         const playlistId = '5318008'
         const trackUris = new Array(REPLACE_TRACKS_LIMIT + 1)
 
         return spotifyApiHelpers
-          .replaceTracksInPlaylist(apiInstance, userId, playlistId, trackUris)
+          .replaceTracksInPlaylist(apiInstance, playlistId, trackUris)
           .catch(() => {
             expect(
               spotifyApiHelpers.removePlaylistTracks
             ).toHaveBeenCalledTimes(1)
             expect(spotifyApiHelpers.removePlaylistTracks).toHaveBeenCalledWith(
               apiInstance,
-              userId,
               playlistId,
               currentTracks.map(currentTrack => currentTrack.track.uri)
             )
@@ -248,17 +227,15 @@ describe('spotifyApi helper', () => {
           Promise.reject(new Error())
         )
 
-        const userId = 'bramschulting'
         const playlistId = '5318008'
         const trackUris = new Array(REPLACE_TRACKS_LIMIT + 1)
 
         return spotifyApiHelpers
-          .replaceTracksInPlaylist(apiInstance, userId, playlistId, trackUris)
+          .replaceTracksInPlaylist(apiInstance, playlistId, trackUris)
           .catch(() => {
             expect(spotifyApiHelpers.addPlaylistTracks).toHaveBeenCalledTimes(1)
             expect(spotifyApiHelpers.addPlaylistTracks).toHaveBeenCalledWith(
               apiInstance,
-              userId,
               playlistId,
               trackUris
             )

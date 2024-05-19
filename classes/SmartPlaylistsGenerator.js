@@ -15,12 +15,12 @@ class SmartPlaylistsGenerator {
     this.playlistGenerators = []
   }
 
-  addPlaylist (loaders, outputPlaylist, generator) {
+  addPlaylist (loaders, outputPlaylistId, generator) {
     // TODO: Validate input
 
     this.playlistGenerators.push({
       loaders,
-      outputPlaylist,
+      outputPlaylistId,
       generator
     })
   }
@@ -41,8 +41,7 @@ class SmartPlaylistsGenerator {
               .then(trackUris =>
                 spotifyApiHelper.replaceTracksInPlaylist(
                   apiInstance,
-                  playlistGenerator.outputPlaylist.userId,
-                  playlistGenerator.outputPlaylist.id,
+                  playlistGenerator.outputPlaylistId,
                   trackUris
                 )
               )
